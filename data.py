@@ -1,3 +1,4 @@
+import codecs
 import os
 import torch
 
@@ -25,17 +26,17 @@ class Dictionary(object):
 
 
 class Corpus(object):
-    def __init__(self, path):
+    def __init__(self, path, train_filename='train.txt', valid_filename='valid.txt', test_filename='test.txt'):
         self.dictionary = Dictionary()
-        self.train = self.tokenize(os.path.join(path, 'train.txt'))
-        self.valid = self.tokenize(os.path.join(path, 'valid.txt'))
-        self.test = self.tokenize(os.path.join(path, 'test.txt'))
+        self.train = self.tokenize(os.path.join(path, train_filename))
+        self.valid = self.tokenize(os.path.join(path, valid_filename))
+        self.test = self.tokenize(os.path.join(path, test_filename))
 
     def tokenize(self, path):
         """Tokenizes a text file."""
         assert os.path.exists(path)
         # Add words to the dictionary
-        with open(path, 'r') as f:
+        with codecs.open(path, mode='r', encoding='iso-8859-1') as f:
             tokens = 0
             for line in f:
                 words = line.split() + ['<eos>']
@@ -44,7 +45,7 @@ class Corpus(object):
                     self.dictionary.add_word(word)
 
         # Tokenize file content
-        with open(path, 'r') as f:
+        with codecs.open(path, mode='r', encoding='iso-8859-1') as f:
             ids = torch.LongTensor(tokens)
             token = 0
             for line in f:
